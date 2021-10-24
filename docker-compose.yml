@@ -1,0 +1,60 @@
+version: '3.7'
+
+services:
+  postgres:
+    image: kartoza/postgis:11.5-2.5
+    container_name: postgres-contact-procesor
+    restart: always
+    environment:
+      - POSTGRES_USER=contact_user
+      - POSTGRES_PASSWORD=pass111
+      - POSTGRES_DB=ContactDB
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5456:5432"
+
+  contact_processor:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: contact_processor
+    container_name: contact_processor
+    command: /usr/local/bin/gunicorn contact_processor.wsgi -w 4 -b 0.0.0.0:8000 -t 0 --reload
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app
+    depends_on:
+      - postgres
+      - rabbitmq-contact-processor
+      - celery-contact-processor
+
+  rabbitmq-contact-processor:
+    image: rabbitmq:3.8-management-alpine
+    container_name: rabbitmq-contact-processor
+    hostname: rabbitmq-contact-processor
+    ports:
+      - "5672:5672"
+      - "15674:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=!QAZxcvfr4
+      - RABBITMQ_DEFAULT_VHOST=vhost-local
+
+  celery-contact-processor:
+    image: contact_processor
+    container_name: celery-contact-processor
+    command: celery -A contact_processor worker -l info --autoscale=10,3
+    env_file:
+      - .env
+    volumes:
+      - ./app:/app
+    depends_on:
+      - postgres
+      - rabbitmq-contact-processor
+
+volumes:
+  postgres_data:

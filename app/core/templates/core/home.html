@@ -1,0 +1,63 @@
+{% extends 'core/base.html' %}
+
+	{% block content %}
+
+
+	<div class="todo-list">
+
+		<h3>Contacts</h3>
+			<div class="item-row">
+
+				<form method="post" enctype="multipart/form-data">
+					{% csrf_token %}
+					{{ form.non_field_errors }}
+					{{ form.name.label }}
+					{{ form.name }}
+					{{ form.name.errors }}
+					{{ form.phone_number.label }}
+					{{ form.phone_number }}
+					{{ form.phone_number.errors }}
+					{{ form.email.label }}
+					{{ form.email }}
+					{{ form.email.errors }}
+					<h4>Or create with exel file</h4>
+					{{ form.xls_file }}
+					<input type="submit" class="btn btn-sm btn-danger" value="Submit">
+				</form>
+
+			</div>
+
+	</div>
+
+		{% for item in page_obj %}
+
+		<div class="item-row">
+
+			<h5>{{item.name}}</h5>
+
+		</div>
+		{% endfor %}
+
+
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}">&laquo;</a>
+        {% endif %}
+
+        <span class="current">
+            {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">&raquo;</a>
+        {% endif %}
+    </span>
+</div>
+
+
+{% endblock content %}
+
+
+
+

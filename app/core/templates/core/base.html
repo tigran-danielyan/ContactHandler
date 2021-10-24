@@ -1,0 +1,47 @@
+{% load static %}
+	<!DOCTYPE html>
+	<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Contact Processor</title>
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'core/css/main.css' %}">
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+</head>
+
+
+	<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">Contacts</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li class="active"><a href="{% url 'home' %}">Home</a></li>
+    </ul>
+
+  </div>
+</nav>
+      <div class="row">
+        <div class="col-md-12">
+          {% if messages %}
+          {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">
+          {{ message }}
+          </div>
+          {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+
+<body>
+
+<div class="center-column">
+	{% block content %}
+	{% endblock content %}
+
+</div>
+</body>
+</html>
